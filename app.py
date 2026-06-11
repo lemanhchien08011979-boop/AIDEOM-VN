@@ -260,7 +260,7 @@ def run_bai10():
     m.b2=pyo.Constraint(m.S,rule=b2)
     def lk(m,s): return m.y[s,"AI"]<=.5*m.x["H"]
     m.lk=pyo.Constraint(m.S,rule=lk)
-    slv=pyo.SolverFactory("glpk")
+    slv=pyo.SolverFactory("highs")
     slv.solve(m,tee=False)
     Zsp=pyo.value(m.obj)
     xv={j:pyo.value(m.x[j]) for j in items}
