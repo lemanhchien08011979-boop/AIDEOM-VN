@@ -224,10 +224,17 @@ def run_bai9():
     b1=np.array([45.,28.,35.,32.,22.,30.,20.,55.])
     c1=np.array([5.2,62.4,18.5,48.2,72.5,42.8,32.5,12.5])
     d1=np.array([50.,32.,42.,38.,26.,36.,24.,62.])
+
+    BUDGET = 30000.
+    # Giới hạn phân bổ tối đa mỗi ngành theo tỷ trọng lao động (tối thiểu 5% ngân sách)
+    share = L / L.sum()
+    cap = np.maximum(share, 0.05) * BUDGET
+
     xA=cp.Variable(8,nonneg=True); xH=cp.Variable(8,nonneg=True)
     NJ=cp.multiply(a1,xA)+cp.multiply(a2,xH)+cp.multiply(b1,xH)-cp.multiply(cp.multiply(c1,risk),xA)
-    cons=[cp.sum(xA+xH)<=30000,NJ>=0,
-          cp.multiply(cp.multiply(c1,risk),xA)<=cp.multiply(d1,xH)]
+    cons=[cp.sum(xA+xH)<=BUDGET, NJ>=0,
+          cp.multiply(cp.multiply(c1,risk),xA)<=cp.multiply(d1,xH),
+          (xA+xH)<=cap]
     prob=cp.Problem(cp.Maximize(cp.sum(NJ)),cons)
     prob.solve(solver=cp.GLPK)
     nj=cp.multiply(a1,xA).value+cp.multiply(a2,xH).value+cp.multiply(b1,xH).value-cp.multiply(cp.multiply(c1,risk),xA).value
