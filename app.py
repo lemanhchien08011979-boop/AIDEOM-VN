@@ -214,7 +214,7 @@ def run_bai6():
 
 @st.cache_data
 def run_bai9():
-   import cvxpy as cp
+    import cvxpy as cp
     sectors=["Nông-Lâm-Thủy sản","CN chế biến","Xây dựng","Bán buôn-bán lẻ",
              "Tài chính-NH","Logistics","CNTT-TT","Giáo dục-ĐT"]
     L=np.array([13.20,11.50,4.80,7.80,.55,1.95,.62,2.15])
