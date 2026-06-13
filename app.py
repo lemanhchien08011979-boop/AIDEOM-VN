@@ -214,25 +214,25 @@ def run_bai6():
 
 @st.cache_data
 def run_bai9():
-    import cvxpy as cp
+   import cvxpy as cp
     sectors=["Nông-Lâm-Thủy sản","CN chế biến","Xây dựng","Bán buôn-bán lẻ",
              "Tài chính-NH","Logistics","CNTT-TT","Giáo dục-ĐT"]
     L=np.array([13.20,11.50,4.80,7.80,.55,1.95,.62,2.15])
     risk=np.array([18,42,25,38,52,35,28,22])/100
     a1=np.array([8.5,32.5,12.8,22.4,45.8,28.5,62.5,18.5])
+    a2=np.array([12.0,18.5,8.5,15.2,12.5,16.8,15.0,22.0])
     b1=np.array([45.,28.,35.,32.,22.,30.,20.,55.])
     c1=np.array([5.2,62.4,18.5,48.2,72.5,42.8,32.5,12.5])
     d1=np.array([50.,32.,42.,38.,26.,36.,24.,62.])
     xA=cp.Variable(8,nonneg=True); xH=cp.Variable(8,nonneg=True)
-    NJ=cp.multiply(a1,xA)+cp.multiply(b1,xH)-cp.multiply(cp.multiply(c1,risk),xA)
+    NJ=cp.multiply(a1,xA)+cp.multiply(a2,xH)+cp.multiply(b1,xH)-cp.multiply(cp.multiply(c1,risk),xA)
     cons=[cp.sum(xA+xH)<=30000,NJ>=0,
           cp.multiply(cp.multiply(c1,risk),xA)<=cp.multiply(d1,xH)]
     prob=cp.Problem(cp.Maximize(cp.sum(NJ)),cons)
     prob.solve(solver=cp.GLPK)
-    nj=cp.multiply(a1,xA).value+cp.multiply(b1,xH).value-cp.multiply(cp.multiply(c1,risk),xA).value
+    nj=cp.multiply(a1,xA).value+cp.multiply(a2,xH).value+cp.multiply(b1,xH).value-cp.multiply(cp.multiply(c1,risk),xA).value
     return {"sectors":sectors,"xA":xA.value,"xH":xH.value,"nj":nj,
             "total":nj.sum() if nj is not None else 0}
-
 @st.cache_data
 def run_bai10():
     import pyomo.environ as pyo
